@@ -19,7 +19,7 @@ specific2: generic ## Apply patches for specific2
 	@./scripts/apply-patches.sh specific2
 
 help: ## Show interactive help
-	@printf "\e[1mVersioned Patch System\e[0m\n"
+	@printf "\e[1mOpenWrt LOM\e[0m\n"
 	@echo
 	@echo   "Typical usage:"
 	@printf "1. make \e[1;35mupdate\e[0m - Update all modules\n"

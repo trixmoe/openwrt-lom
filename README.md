@@ -1,5 +1,5 @@
-# Versioned Patch System
+# OpenWrt-LOM
 
-Framework to help maintain (un-upstreamable) patches on top of a repository, in a versioned repository.
+Use an OpenWrt device as a VPN into your LOM network.
 
-Inspired by [gluon](https://github.com/freifunk-gluon/gluon)'s approach, but more minimal and *should* work with `/bin/sh`.
+The repository is based off [versioned-patch-system](https://github.com/trixmoe/versioned-patch-system), which facilitates maintenance of patches.

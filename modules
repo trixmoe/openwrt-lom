@@ -1,11 +1,6 @@
-MODULES="DASHBOARD BEAMER"
+MODULES="OPENWRT"
 
-DASHBOARD_URL="https://github.com/trixmoe/cnc-dashboard.git"
-DASHBOARD_BRANCH="master"
-DASHBOARD_COMMIT="d46f6d0254d1d8718f8357baa8a69de6d3988787"
-DASHBOARD_DIRECTORY="command-and-control"
-
-BEAMER_URL="https://github.com/trixmoe/beamer-serial.git"
-BEAMER_BRANCH="main"
-BEAMER_COMMIT="388960fc6f768587b6caddc9e6dcf93b6d103789"
-BEAMER_DIRECTORY="beamer"
+OPENWRT_URL="https://github.com/openwrt/openwrt.git"
+OPENWRT_BRANCH="v24.10.1"
+OPENWRT_COMMIT="d183d7bb7827a469f09bf77f2f22fd9d70ac0ed6"
+OPENWRT_DIRECTORY="openwrt"
