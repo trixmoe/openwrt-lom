@@ -18,6 +18,9 @@ specific: generic ## Apply patches for specific
 specific2: generic ## Apply patches for specific2
 	@./scripts/apply-patches.sh specific2
 
+docker: ## Build Docker image
+	@./scripts/lom/docker.sh
+
 help: ## Show interactive help
 	@printf "\e[1mOpenWrt LOM\e[0m\n"
 	@echo
