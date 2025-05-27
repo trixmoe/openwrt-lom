@@ -21,6 +21,8 @@ specific2: generic ## Apply patches for specific2
 docker: ## Build Docker image
 	@./scripts/lom/docker.sh
 
+build: ## Build OpenWrt
+	@./scripts/lom/build.sh
 help: ## Show interactive help
 	@printf "\e[1mOpenWrt LOM\e[0m\n"
 	@echo
