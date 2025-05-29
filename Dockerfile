@@ -3,7 +3,7 @@ FROM debian:12
 # Install dependencie
 RUN apt update && apt-get upgrade -y && \
     apt install -y bash bash-completion sudo tmux vim git git-doc git-extras git-filter-repo tig \
-        build-essential clang flex bison g++ gawk gettext git libncurses5-dev libssl-dev python3-setuptools rsync swig unzip zlib1g-dev file wget rsync && \
+        build-essential clang flex bison g++ gawk gettext git libncurses5-dev libssl-dev python3-setuptools python3-dev rsync swig unzip zlib1g-dev file wget rsync && \
     ( apt install -y gcc-multilib g++-multilib || echo "WARNING: Not install gcc-multilib, as they are not available. This is a known quirk of arm64.")
 
 ARG HOME_DIR=/build/
