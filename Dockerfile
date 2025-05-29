@@ -7,7 +7,7 @@ RUN apt update && apt-get upgrade -y && \
     ( apt install -y gcc-multilib g++-multilib || echo "WARNING: Not install gcc-multilib, as they are not available. This is a known quirk of arm64.")
 
 ARG HOME_DIR=/build/
-ARG PROJ_DIR=$HOME_DIR/openwrt/
+ARG PROJ_DIR=$HOME_DIR/openwrt-lom/
 
 # Allow NOPASSWD sudo
 RUN sed -i /etc/sudoers -re 's/^%sudo.*/%sudo ALL=(ALL:ALL) NOPASSWD: ALL/g'
@@ -17,5 +17,5 @@ RUN useradd -mG sudo -d $HOME_DIR -s /bin/bash build
 USER build
 RUN mkdir $PROJ_DIR
 WORKDIR $PROJ_DIR
-COPY . .
+COPY --chown=build:build . .
 RUN make update
