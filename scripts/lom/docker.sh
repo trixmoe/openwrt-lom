@@ -36,12 +36,16 @@ run() {
     docker run --name openwrt-lom -dt openwrt-lom bash || { errormsg "failed to run Docker container\n"; exit 1; }
 }
 
-
+rm() {
+    docker kill openwrt-lom > /dev/null
+    docker container rm openwrt-lom > /dev/null
+}
 
 case $1 in
     start)  start_docker ;;
     build)  build ;;
     run)    run ;;
+    rm)     rm ;;
     *)  start_docker
         build
         run
