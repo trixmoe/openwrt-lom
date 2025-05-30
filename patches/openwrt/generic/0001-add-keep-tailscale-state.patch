@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Trix <75177432+trixmoe@users.noreply.github.com>
+Date: Thu, 29 May 2025 16:37:03 +0000
+Subject: add: keep tailscale state
+
+---
+ files/lib/upgrade/keep.d/tailscale | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 files/lib/upgrade/keep.d/tailscale
+
+diff --git a/files/lib/upgrade/keep.d/tailscale b/files/lib/upgrade/keep.d/tailscale
+new file mode 100644
+index 0000000000..41829cb732
+--- /dev/null
++++ b/files/lib/upgrade/keep.d/tailscale
+@@ -0,0 +1 @@
++/etc/tailscale/tailscaled.state
+-- 
+2.39.5
+
