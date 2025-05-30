@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Trix <75177432+trixmoe@users.noreply.github.com>
+Date: Fri, 30 May 2025 10:29:05 +0000
+Subject: add: WiFi support for NanoPi NEO Plus 2
+
+I'll put some effort into upstreaming this at some point.
+---
+ target/linux/sunxi/image/cortexa53.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/target/linux/sunxi/image/cortexa53.mk b/target/linux/sunxi/image/cortexa53.mk
+index 06b409deb7..7a607bee73 100644
+--- a/target/linux/sunxi/image/cortexa53.mk
++++ b/target/linux/sunxi/image/cortexa53.mk
+@@ -40,6 +40,7 @@ define Device/friendlyarm_nanopi-neo-plus2
+   DEVICE_VENDOR := FriendlyARM
+   DEVICE_MODEL := NanoPi NEO Plus2
+   SUPPORTED_DEVICES:=nanopi-neo-plus2
++  DEVICE_PACKAGES := kmod-brcmfmac cypress-firmware-43430-sdio wpad-basic-mbedtls
+   $(Device/sun50i-h5)
+ endef
+ TARGET_DEVICES += friendlyarm_nanopi-neo-plus2
+-- 
+2.39.5
+
