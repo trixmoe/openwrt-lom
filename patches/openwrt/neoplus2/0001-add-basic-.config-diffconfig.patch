@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Trix <75177432+trixmoe@users.noreply.github.com>
+Date: Thu, 29 May 2025 14:23:37 +0000
+Subject: add: basic .config (diffconfig)
+
+---
+ .config | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 .config
+
+diff --git a/.config b/.config
+new file mode 100644
+index 0000000000..74eec35ca6
+--- /dev/null
++++ b/.config
+@@ -0,0 +1,5 @@
++CONFIG_TARGET_sunxi=y
++CONFIG_TARGET_sunxi_cortexa53=y
++CONFIG_TARGET_sunxi_cortexa53_DEVICE_friendlyarm_nanopi-neo-plus2=y
++CONFIG_PACKAGE_kmod-tun=y
++CONFIG_PACKAGE_tailscale=y
+-- 
+2.39.5
+
