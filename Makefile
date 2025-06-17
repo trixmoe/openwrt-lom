@@ -23,6 +23,22 @@ docker: ## Build Docker image
 
 build: ## Build OpenWrt
 	@./scripts/lom/build.sh
+
+ci-docker-build:
+	@./scripts/lom/docker.sh build
+
+ci-docker-run:
+	@./scripts/lom/docker.sh run
+
+ci-patch-neoplus2:
+	@./scripts/lom/docker.sh patch neoplus2
+
+ci-compile:
+	@./scripts/lom/docker.sh compile
+
+ci-copy:
+	@./scripts/lom/docker.sh copy
+
 help: ## Show interactive help
 	@printf "\e[1mOpenWrt LOM\e[0m\n"
 	@echo
