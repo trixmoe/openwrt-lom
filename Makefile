@@ -12,8 +12,8 @@ save: ## Save patches
 generic: ## Apply generic patches
 	@./scripts/apply-patches.sh generic
 
-specific: generic ## Apply patches for specific
-	@./scripts/apply-patches.sh specific
+neoplus2: generic ## Apply patches for neoplus2
+	@./scripts/apply-patches.sh neoplus2
 
 specific2: generic ## Apply patches for specific2
 	@./scripts/apply-patches.sh specific2
@@ -26,11 +26,11 @@ build: ## Build OpenWrt
 help: ## Show interactive help
 	@printf "\e[1mOpenWrt LOM\e[0m\n"
 	@echo
-	@echo   "Typical usage:"
+	@echo   "Usage:"
 	@printf "1. make \e[1;35mupdate\e[0m - Update all modules\n"
 	@echo
 	@printf "2. make \e[1;35mgeneric\e[0m - Only apply generic patches\n"
-	@printf "2. make \e[1;35mspecific\e[0m - Apply generic + specific patches\n"
+	@printf "2. make \e[1;35mneoplus2\e[0m - Apply generic + neoplus2 patches\n"
 	@printf "2. make \e[1;35mspecific2\e[0m - Apply generic + specific2 patches\n"
 	@echo
 	@printf "3. make \e[1;35msave\e[0m - Save commits to patches\n"
