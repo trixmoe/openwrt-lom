@@ -48,11 +48,11 @@ patch() {
     if [ ! "$1" = "neoplus2" ]; then
         errormsg "patch set \"%s\" does not exist" "$1"
     fi
-    docker exec "$container_name" "make $1"
+    docker exec "$container_name" make "$1"
 }
 
 compile() {
-    docker exec "$container_name" "make build"
+    docker exec "$container_name" make build
 }
 
 copy() {
