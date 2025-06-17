@@ -1,0 +1,26 @@
+name: Build OpenWrt
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build Docker image
+        run: make ci-docker-build
+      - name: Start Docker container
+        run: make ci-docker-run
+      - name: Build OpenWrt
+        run: make ci-compile
+      - name: Copy output files
+        run: make ci-copy
+      - name: Upload output files
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: "openwrt-bin-output"
+          path: "./bin"
