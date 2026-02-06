@@ -35,5 +35,5 @@ case $1 in
     compile)  compile;;
     copy)     copy;;
     *)        print_help
-              break;;
+              exit 1;;
 esac
