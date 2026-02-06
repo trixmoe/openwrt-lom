@@ -41,6 +41,21 @@ rebuild: ## Rebuild OpenWrt (DIRTY but quicker)
 qemu: ## Run built aarch64 files in QEMU (Quit: CTRL+A, then X)
 	@./scripts/openwrt/qemu.sh
 
+ci-docker-build:
+	@./scripts/docker.sh build
+
+ci-docker-run:
+	@./scripts/docker.sh run
+
+ci-patch-neoplus2:
+	@./scripts/lom/docker.sh patch neoplus2
+
+ci-compile:
+	@./scripts/lom/docker.sh compile
+
+ci-copy:
+	@./scripts/lom/docker.sh copy
+
 title: # Title
 	@printf "\e[1mOpenWrt LOM\e[0m\n"
 
