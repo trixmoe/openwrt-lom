@@ -48,13 +48,13 @@ ci-docker-run:
 	@./scripts/docker.sh run
 
 ci-patch-neoplus2:
-	@./scripts/lom/docker.sh patch neoplus2
+	@./scripts/lom/ci.sh patch neoplus2
 
 ci-compile:
-	@./scripts/lom/docker.sh compile
+	@./scripts/lom/ci.sh compile
 
 ci-copy:
-	@./scripts/lom/docker.sh copy
+	@./scripts/lom/ci.sh copy
 
 title: # Title
 	@printf "\e[1mOpenWrt LOM\e[0m\n"
