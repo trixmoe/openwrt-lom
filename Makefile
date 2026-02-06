@@ -42,7 +42,7 @@ qemu: ## Run built aarch64 files in QEMU (Quit: CTRL+A, then X)
 	@./scripts/openwrt/qemu.sh
 
 title: # Title
-	@printf "\e[1mPatchWrt\e[0m\n"
+	@printf "\e[1mOpenWrt LOM\e[0m\n"
 
 help-text: # Help info
 	@echo
