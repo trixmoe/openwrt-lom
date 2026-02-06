@@ -21,8 +21,8 @@ generic: ## Apply generic patches
 specific: generic # Apply patches for specific (kept for test.sh)
 	@./scripts/apply-patches.sh specific
 
-target1: generic ## Apply patches for target1
-	@./scripts/apply-patches.sh target1
+neoplus2: generic ## Apply patches for neoplus2
+	@./scripts/apply-patches.sh neoplus2
 	@./scripts/openwrt/prepare-feeds.sh
 
 target2: generic ## Apply patches for target2
@@ -55,7 +55,7 @@ help-text: # Help info
 	@echo
 	@printf "3.  Run one of these commands:\n"
 	@printf "    make \e[1;35mgeneric\e[0m - Only apply generic patches\n"
-	@printf "    make \e[1;35mtarget1\e[0m - Apply generic + target1 patches\n"
+	@printf "    make \e[1;35mneoplus21\e[0m - Apply generic + neoplus2 patches\n"
 	@printf "    make \e[1;35mtarget2\e[0m - Apply generic + target2 patches\n"
 	@echo
 	@printf "4.  make \e[1;35mbuild\e[0m - Build OpenWrt\n"
