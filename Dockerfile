@@ -8,6 +8,9 @@ RUN apt-get update && \
                 build-essential asciidoc bash binutils bzip2 flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc zlib1g-dev \
                 rsync
 
+# Installing packages (downstream of PatchWrt), dependency of newer OpenWrt versions
+RUN apt install -y python3-setuptools
+
 # Allow NOPASSWD sudo
 RUN sed -i /etc/sudoers -re 's/^%sudo.*/%sudo ALL=(ALL:ALL) NOPASSWD: ALL/g'
 
