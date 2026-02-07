@@ -53,7 +53,7 @@ jobs:
           if [ "$INVALIDATE_CACHE" != "true" ] && docker pull "$CACHE_IMAGE"; then
             echo -e "${success}${green} Cache hit - using cached Docker image${reset}"
           else
-            echo "${miss}${yellow} Cache miss - building Docker image${reset}"
+            echo -e "${miss}${yellow} Cache miss - building Docker image${reset}"
             make ci-docker-build
 
             # Determine local image name (uses name in common.sh)
