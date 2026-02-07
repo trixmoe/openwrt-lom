@@ -44,8 +44,11 @@ rebuild: ## Rebuild OpenWrt (DIRTY but quicker)
 qemu: ## Run built aarch64 files in QEMU (Quit: CTRL+A, then X)
 	@./scripts/openwrt/qemu.sh
 
-ci-docker-build:
+ci-docker-build: # non-toolchain build
 	@./scripts/docker.sh build
+
+ci-docker-build-toolchain: # toolchain build
+	@DOCKER_BUILD_TARGET=toolchain ./scripts/docker.sh build
 
 ci-docker-run:
 	@./scripts/docker.sh run
@@ -53,17 +56,8 @@ ci-docker-run:
 ci-patch-neoplus2:
 	@./scripts/lom/ci.sh patch neoplus2
 
-ci-docker-run-no-vol:
-	@./scripts/lom/ci.sh docker-run
-
 ci-reset-openwrt:
 	@./scripts/lom/ci.sh reset
-
-ci-toolchain:
-	@./scripts/lom/ci.sh toolchain
-
-ci-toolchain-commit:
-	@./scripts/lom/ci.sh commit $(CI_TOOLCHAIN_IMAGE)
 
 ci-compile:
 	@./scripts/lom/ci.sh compile

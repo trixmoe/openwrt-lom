@@ -44,3 +44,8 @@ COPY --chown=$USR Makefile ./
 COPY --chown=$USR patches ./patches
 COPY --chown=$USR .git/ ./.git/
 COPY --chown=$USR .gitignore ./
+
+# toolchain extends builder with patches applied and toolchain compiled, for CI caching
+FROM builder AS toolchain
+RUN make neoplus2
+RUN make toolchain
