@@ -3,6 +3,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      invalidate-cache:
+        description: "Invalidate cache (force Docker image rebuild)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -37,6 +42,7 @@ jobs:
         id: docker
         env:
           CACHE_IMAGE: ${{ needs.gather-info.outputs.cache-image }}
+          INVALIDATE_CACHE: ${{ inputs.invalidate-cache == true }}
         run: |
           green="\033[0;32m"
           yellow="\033[0;33m"
@@ -44,7 +50,7 @@ jobs:
           success="✅"
           miss="⏳"
 
-          if docker pull "$CACHE_IMAGE"; then
+          if [ "$INVALIDATE_CACHE" != "true" ] && docker pull "$CACHE_IMAGE"; then
             echo -e "${success}${green} Cache hit - using cached Docker image${reset}"
           else
             echo "${miss}${yellow} Cache miss - building Docker image${reset}"
