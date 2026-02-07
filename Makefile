@@ -32,7 +32,10 @@ target2: generic ## Apply patches for target2
 docker: ## Build Docker image
 	@./scripts/docker.sh all
 
-build: ## Build OpenWRT
+toolchain: ## Build OpenWrt tools and toolchain
+	@./scripts/openwrt/build.sh --toolchain
+
+build: ## Build OpenWrt (incl. toolchain)
 	@./scripts/openwrt/build.sh
 
 rebuild: ## Rebuild OpenWrt (DIRTY but quicker)
