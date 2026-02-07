@@ -22,7 +22,7 @@ env:
 
 jobs:
   build-image:
-    name: Build Docker image with toolchain (and cache it)
+    name: Build toolchain image (and cache it)
     runs-on: ubuntu-latest
     outputs:
       cache-image: ${{ steps.build.outputs.cache-image }}
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
       - name: Pull cached image or build
         id: build
         env:
@@ -42,14 +42,14 @@ jobs:
           echo "cache-image=$CACHE_IMAGE" >> "$GITHUB_OUTPUT"
           echo "local-image=$LOCAL_IMAGE" >> "$GITHUB_OUTPUT"
 
-          if [ "$INVALIDATE_CACHE" != "true" ] && docker pull "$CACHE_IMAGE"; then
+          if [ "$INVALIDATE_CACHE" != "true" ] && podman pull "$CACHE_IMAGE"; then
             echo -e "${ICON_HIT}${COLOR_GREEN} Cache hit - using cached image${COLOR_RESET}"
           else
             echo -e "${ICON_MISS}${COLOR_YELLOW} Cache miss - building image${COLOR_RESET}"
-            make ci-docker-build-toolchain
+            make ci-build
 
-            docker tag "$LOCAL_IMAGE" "$CACHE_IMAGE"
-            docker push "$CACHE_IMAGE"
+            podman tag "$LOCAL_IMAGE" "$CACHE_IMAGE"
+            podman push "$CACHE_IMAGE"
           fi
 
   build-openwrt:
@@ -59,16 +59,16 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
       - name: Pull toolchain image
         env:
           CACHE_IMAGE: ${{ needs.build-image.outputs.cache-image }}
           LOCAL_IMAGE: ${{ needs.build-image.outputs.local-image }}
         run: |
-          docker pull "$CACHE_IMAGE"
-          docker tag "$CACHE_IMAGE" "$LOCAL_IMAGE"
-      - name: Start Docker container
-        run: make ci-docker-run
+          podman pull "$CACHE_IMAGE"
+          podman tag "$CACHE_IMAGE" "$LOCAL_IMAGE"
+      - name: Start container
+        run: make ci-run
       - name: Reset OpenWrt to base commit
         run: make ci-reset-openwrt
       - name: Add NeoPlus2 patches
