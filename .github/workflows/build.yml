@@ -4,15 +4,75 @@ on:
   pull_request:
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: read
+  packages: write
 
 jobs:
+  gather-info:
+    name: Gather info for caching
+    runs-on: ubuntu-latest
+    outputs:
+      docker-hash: ${{ steps.hash.outputs.cache-image }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Compute Docker cache hash
+        id: hash
+        run: |
+          hash=$(cat modules Dockerfile | sha256sum | cut -d ' ' -f 1)
+          CACHE_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:cache-${hash}"
+          echo "cache-image=$CACHE_IMAGE" >> "$GITHUB_OUTPUT"
+
   build-docker:
+    name: Build Docker image if necessary (and cache it)
+    needs: gather-info
+    runs-on: ubuntu-latest
+    outputs:
+      local-image: ${{ steps.hash.outputs.local-image }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Pull cached Docker image or build
+        id: docker
+        env:
+          CACHE_IMAGE: ${{ needs.gather-info.outputs.cache-image }}
+        run: |
+          green="\033[0;32m"
+          yellow="\033[0;33m"
+          reset="\033[0m"
+          success="✅"
+          miss="⏳"
+
+          if docker pull "$CACHE_IMAGE"; then
+            echo -e "${success}${green} Cache hit - using cached Docker image${reset}"
+          else
+            echo "${miss}${yellow} Cache miss - building Docker image${reset}"
+            make ci-docker-build
+
+            # Determine local image name (uses name in common.sh)
+            LOCAL_IMAGE="$(BASE_SCRIPTS_DIR=./scripts/;. scripts/common.sh; echo $image_name)"
+            echo "local-image=$LOCAL_IMAGE" >> "$GITHUB_OUTPUT"
+
+            docker tag "$LOCAL_IMAGE" "$CACHE_IMAGE"
+            docker push "$CACHE_IMAGE"
+          fi
+
+  build-openwrt:
+    name: Build OpenWrt
+    needs: build-docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Build Docker image
-        run: make ci-docker-build
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Pull Docker image
+        env:
+          CACHE_IMAGE: ${{ needs.gather-info.outputs.cache-image }}
+          LOCAL_IMAGE: ${{ needs.build-docker.outputs.local-image }}
+        run: |
+          docker pull "$CACHE_IMAGE"
+          docker tag "$CACHE_IMAGE" "$LOCAL_IMAGE"
       - name: Start Docker container
         run: make ci-docker-run
       - name: Add NeoPlus2 patches
@@ -22,7 +82,7 @@ jobs:
       - name: Copy output files
         run: make ci-copy
       - name: Upload output files
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: "openwrt-bin-output"
           path: "./bin"
