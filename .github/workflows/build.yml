@@ -36,7 +36,7 @@ jobs:
       - name: Compute cache hashes
         id: hash
         run: |
-          hash=$(cat modules Dockerfile | sha256sum | cut -d ' ' -f 1)
+          hash=$(cat modules Dockerfile Makefile | sha256sum | cut -d ' ' -f 1)
           CACHE_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:cache-${hash}"
           TOOLCHAIN_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:toolchain-neoplus2-$(uname -m)-${hash}"
           echo "cache-image=$CACHE_IMAGE" >> "$GITHUB_OUTPUT"
