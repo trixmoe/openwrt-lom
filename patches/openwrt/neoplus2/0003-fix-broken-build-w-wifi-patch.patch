@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Trix <75177432+trixmoe@users.noreply.github.com>
+Date: Sat, 7 Feb 2026 02:28:15 +0000
+Subject: fix: broken build w/ wifi patch
+
+---
+ target/linux/sunxi/cortexa53/config-6.6 | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/target/linux/sunxi/cortexa53/config-6.6 b/target/linux/sunxi/cortexa53/config-6.6
+index 89cd43a54e..39985289cd 100644
+--- a/target/linux/sunxi/cortexa53/config-6.6
++++ b/target/linux/sunxi/cortexa53/config-6.6
+@@ -107,3 +107,4 @@ CONFIG_USB_MUSB_SUNXI=y
+ CONFIG_USB_PHY=y
+ CONFIG_VMAP_STACK=y
+ CONFIG_ZONE_DMA32=y
++CONFIG_REALTEK_PHY_HWMON=y
+-- 
+2.39.5
+
