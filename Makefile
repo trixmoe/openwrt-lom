@@ -53,6 +53,18 @@ ci-docker-run:
 ci-patch-neoplus2:
 	@./scripts/lom/ci.sh patch neoplus2
 
+ci-docker-run-no-vol:
+	@./scripts/lom/ci.sh docker-run
+
+ci-reset-openwrt:
+	@./scripts/lom/ci.sh reset
+
+ci-toolchain:
+	@./scripts/lom/ci.sh toolchain
+
+ci-toolchain-commit:
+	@./scripts/lom/ci.sh commit $(CI_TOOLCHAIN_IMAGE)
+
 ci-compile:
 	@./scripts/lom/ci.sh compile
 

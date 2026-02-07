@@ -8,10 +8,21 @@ on:
         description: "Invalidate cache (force Docker image rebuild)"
         type: boolean
         default: false
+      invalidate-toolchain-cache:
+        description: "Invalidate toolchain cache (force tools/toolchain rebuild)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
   packages: write
+
+env:
+  COLOR_GREEN: '\033[0;32m'
+  COLOR_YELLOW: '\033[0;33m'
+  COLOR_RESET: '\033[0m'
+  ICON_HIT: "\u2705"
+  ICON_MISS: "\u23F3"
 
 jobs:
   gather-info:
@@ -19,14 +30,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cache-image: ${{ steps.hash.outputs.cache-image }}
+      toolchain-image: ${{ steps.hash.outputs.toolchain-image }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Compute Docker cache hash
+      - name: Compute cache hashes
         id: hash
         run: |
           hash=$(cat modules Dockerfile | sha256sum | cut -d ' ' -f 1)
           CACHE_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:cache-${hash}"
+          TOOLCHAIN_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:toolchain-neoplus2-$(uname -m)-${hash}"
           echo "cache-image=$CACHE_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "toolchain-image=$TOOLCHAIN_IMAGE" >> "$GITHUB_OUTPUT"
 
   build-docker:
     name: Build Docker image if necessary (and cache it)
@@ -44,43 +58,72 @@ jobs:
           CACHE_IMAGE: ${{ needs.gather-info.outputs.cache-image }}
           INVALIDATE_CACHE: ${{ inputs.invalidate-cache == true }}
         run: |
-          green="\033[0;32m"
-          yellow="\033[0;33m"
-          reset="\033[0m"
-          success="✅"
-          miss="⏳"
+          LOCAL_IMAGE="$(BASE_SCRIPTS_DIR=./scripts/;. scripts/common.sh; echo $image_name)"
+          echo "local-image=$LOCAL_IMAGE" >> "$GITHUB_OUTPUT"
 
           if [ "$INVALIDATE_CACHE" != "true" ] && docker pull "$CACHE_IMAGE"; then
-            echo -e "${success}${green} Cache hit - using cached Docker image${reset}"
+            echo -e "${ICON_HIT}${COLOR_GREEN} Cache hit - using cached Docker image${COLOR_RESET}"
           else
-            echo -e "${miss}${yellow} Cache miss - building Docker image${reset}"
+            echo -e "${ICON_MISS}${COLOR_YELLOW} Cache miss - building Docker image${COLOR_RESET}"
             make ci-docker-build
-
-            # Determine local image name (uses name in common.sh)
-            LOCAL_IMAGE="$(BASE_SCRIPTS_DIR=./scripts/;. scripts/common.sh; echo $image_name)"
-            echo "local-image=$LOCAL_IMAGE" >> "$GITHUB_OUTPUT"
 
             docker tag "$LOCAL_IMAGE" "$CACHE_IMAGE"
             docker push "$CACHE_IMAGE"
           fi
 
-  build-openwrt:
-    name: Build OpenWrt
+  build-toolchain:
+    name: Build toolchain if necessary (and cache it)
     needs: [gather-info, build-docker]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-      - name: Pull Docker image
+      - name: Pull cached toolchain image or build
         env:
-          CACHE_IMAGE: ${{ needs.gather-info.outputs.cache-image }}
+          DOCKER_CACHE_IMAGE: ${{ needs.gather-info.outputs.cache-image }}
+          TOOLCHAIN_IMAGE: ${{ needs.gather-info.outputs.toolchain-image }}
+          LOCAL_IMAGE: ${{ needs.build-docker.outputs.local-image }}
+          INVALIDATE_CACHE: ${{ inputs.invalidate-toolchain-cache == true }}
+        run: |
+          if [ "$INVALIDATE_CACHE" != "true" ] && docker pull "$TOOLCHAIN_IMAGE"; then
+            echo -e "${ICON_HIT}${COLOR_GREEN} Cache hit - using cached toolchain image${COLOR_RESET}"
+          else
+            echo -e "${ICON_MISS}${COLOR_YELLOW} Cache miss - building toolchain${COLOR_RESET}"
+
+            # Pull the base Docker image and tag locally
+            docker pull "$DOCKER_CACHE_IMAGE"
+            docker tag "$DOCKER_CACHE_IMAGE" "$LOCAL_IMAGE"
+
+            # Run container without volume (required for docker commit)
+            make ci-docker-run-no-vol
+            make ci-patch-neoplus2
+            make ci-toolchain
+
+            # Commit container state and push as toolchain cache
+            make ci-toolchain-commit CI_TOOLCHAIN_IMAGE="$TOOLCHAIN_IMAGE"
+            docker push "$TOOLCHAIN_IMAGE"
+          fi
+
+  build-openwrt:
+    name: Build OpenWrt
+    needs: [gather-info, build-docker, build-toolchain]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Pull toolchain image
+        env:
+          TOOLCHAIN_IMAGE: ${{ needs.gather-info.outputs.toolchain-image }}
           LOCAL_IMAGE: ${{ needs.build-docker.outputs.local-image }}
         run: |
-          docker pull "$CACHE_IMAGE"
-          docker tag "$CACHE_IMAGE" "$LOCAL_IMAGE"
+          docker pull "$TOOLCHAIN_IMAGE"
+          docker tag "$TOOLCHAIN_IMAGE" "$LOCAL_IMAGE"
       - name: Start Docker container
         run: make ci-docker-run
+      - name: Reset OpenWrt to base commit
+        run: make ci-reset-openwrt
       - name: Add NeoPlus2 patches
         run: make ci-patch-neoplus2
       - name: Build OpenWrt
@@ -92,4 +135,3 @@ jobs:
         with:
           name: "openwrt-bin-output"
           path: "./bin"
-
