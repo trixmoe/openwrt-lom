@@ -48,8 +48,7 @@ reset_openwrt() {
 }
 
 compile() {
-    # Skip 'make clean' (which build.sh does) to preserve toolchain build artifacts
-    podman exec "$container_name" sh -c 'cd openwrt && make defconfig && make -j$(nproc)'
+    podman exec "$container_name" make build
 }
 
 copy() {
