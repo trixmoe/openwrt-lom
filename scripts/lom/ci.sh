@@ -29,6 +29,7 @@ build() {
 
 run() {
     podman run --name "$container_name" \
+        --mount "type=bind,src=./patches,dst=${build_dir}/patches" \
         --mount "type=volume,src=${cached_volume},dst=${build_dir}/openwrt" \
         -dt "$image_name" bash
 }
