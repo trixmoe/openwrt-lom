@@ -47,8 +47,10 @@ ncpus=$(nproc)
 
 if [ -n "$toolchain_only" ]; then
     make defconfig
-    make tools/compile "-j$ncpus"
-    make toolchain/compile "-j$ncpus"
+    # 'make prepare' builds tools + toolchain + kernel AND creates stampfiles.
+    # Using tools/compile + toolchain/compile directly skips stamp creation,
+    # causing expensive autoremove re-checks (~17 min) on subsequent builds.
+    make prepare "-j$ncpus"
     exit 0
 fi
 
