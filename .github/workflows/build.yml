@@ -33,11 +33,11 @@ jobs:
       - name: Free more disk space
         run: |
           df -h
-          sudo rm -rf /usr/local/.ghcup
-          sudo rm -rf /opt/pipx
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/share/swift
-          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -vrf /usr/local/.ghcup
+          sudo rm -vrf /opt/pipx
+          sudo rm -vrf /usr/share/dotnet
+          sudo rm -vrf /usr/share/swift
+          sudo rm -vrf /opt/hostedtoolcache
           df -h
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install moreutils (ts for build timestamps)
