@@ -44,8 +44,8 @@ jobs:
           echo "cache-image=$CACHE_IMAGE" >> "$GITHUB_OUTPUT"
           echo "local-image=$LOCAL_IMAGE" >> "$GITHUB_OUTPUT"
 
-          if [ "$INVALIDATE_CACHE" != "true" ] && podman pull "$CACHE_IMAGE"; then
-            echo -e "${ICON_HIT}${COLOR_GREEN} Cache hit - using cached image${COLOR_RESET}"
+          if [ "$INVALIDATE_CACHE" != "true" ] && skopeo inspect "docker://$CACHE_IMAGE" > /dev/null 2>&1; then
+            echo -e "${ICON_HIT}${COLOR_GREEN} Cache hit - image exists in registry${COLOR_RESET}"
           else
             echo -e "${ICON_MISS}${COLOR_YELLOW} Cache miss - building image${COLOR_RESET}"
             make ci-build
