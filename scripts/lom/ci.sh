@@ -24,7 +24,7 @@ build() {
         --build-arg BUILD_USER="$build_user" --build-arg BUILD_ROOTDIR="$root_dir" --build-arg BUILD_PROJDIR="$proj_dir" \
         --target toolchain \
         --squash \
-        -t "$image_name" .
+        -t "$image_name" . 2>&1 | ts -s '[%H:%M:%S]'
 }
 
 run() {
