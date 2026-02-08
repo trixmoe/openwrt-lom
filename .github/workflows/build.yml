@@ -32,12 +32,13 @@ jobs:
         run: curl -fsSL https://raw.githubusercontent.com/kou/arrow/e49d8ae15583ceff03237571569099a6ad62be32/ci/scripts/util_free_space.sh | bash
       - name: Free more disk space
         run: |
+          set -x
           df -h
-          sudo rm -vrf /usr/local/.ghcup
-          sudo rm -vrf /opt/pipx
-          sudo rm -vrf /usr/share/dotnet
-          sudo rm -vrf /usr/share/swift
-          sudo rm -vrf /opt/hostedtoolcache
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /opt/pipx
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /opt/hostedtoolcache
           df -h
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install moreutils (ts for build timestamps)
@@ -74,12 +75,13 @@ jobs:
         run: curl -fsSL https://raw.githubusercontent.com/kou/arrow/e49d8ae15583ceff03237571569099a6ad62be32/ci/scripts/util_free_space.sh | bash
       - name: Free more disk space
         run: |
+          set -x
           df -h
-          sudo rm -vrf /usr/local/.ghcup
-          sudo rm -vrf /opt/pipx
-          sudo rm -vrf /usr/share/dotnet
-          sudo rm -vrf /usr/share/swift
-          sudo rm -vrf /opt/hostedtoolcache
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /opt/pipx
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /opt/hostedtoolcache
           df -h
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Log in to GitHub Container Registry
