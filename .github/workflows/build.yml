@@ -41,6 +41,7 @@ jobs:
           INVALIDATE_CACHE: ${{ inputs.invalidate-cache == true }}
         run: |
           hash=$({ cat modules Dockerfile Makefile; find scripts -type f | sort | xargs cat; } | sha256sum | cut -d ' ' -f 1)
+          hash=96be78c7807463aac1e3df7675918a92b1e8c83f93685e7213a13fa1290086fc
           CACHE_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:toolchain-${hash}"
           LOCAL_IMAGE="$(BASE_SCRIPTS_DIR=./scripts/;. scripts/common.sh; echo $image_name)"
           echo "cache-image=$CACHE_IMAGE" >> "$GITHUB_OUTPUT"
