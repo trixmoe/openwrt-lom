@@ -10,7 +10,7 @@ print_help()
 
     printf "  --help          Show this help menu\n\n"
 
-    printf "  build           Build the toolchain image (squashed)\n"
+    printf "  build           Build the toolchain image\n"
     printf "  run             Run a container from the image\n"
     printf "  patch [set]     Apply patchset [set]\n"
     printf "  reset           Reset openwrt to base commit (from modules file)\n"
@@ -23,7 +23,6 @@ build() {
     buildah bud \
         --build-arg BUILD_USER="$build_user" --build-arg BUILD_ROOTDIR="$root_dir" --build-arg BUILD_PROJDIR="$proj_dir" \
         --target toolchain \
-        --squash \
         -t "$image_name" . 2>&1 | ts -s '[%H:%M:%S]'
 }
 
