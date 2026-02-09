@@ -42,6 +42,8 @@ patch() {
 reset_openwrt() {
     # shellcheck source=./modules
     . "$MODULES_FILE_ROOTDIR"
+    podman exec "$container_name" git -C "${build_dir}/openwrt" status # Running status before reset makes Make etc. happy
+    # Somehow it prevents some kind of breakage which happens otherwise. I'm not sure why or how. but this works.
     podman exec "$container_name" git -C "${build_dir}/openwrt" reset --hard "$OPENWRT_COMMIT"
 }
 
